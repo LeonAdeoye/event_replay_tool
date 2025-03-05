@@ -29,7 +29,7 @@ const Comparer = () => {
     }
 
     return (
-        <div style={{ height: 500, width: '100%', border: "1px solid gray"}}>
+        <div style={{ height: 500, width: '100%'}}>
             <AgGridReact
                 rowData={rowData}
                 columnDefs={colDefs}

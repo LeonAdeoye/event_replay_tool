@@ -23,7 +23,7 @@ const Dispatcher = () => {
 
     return (
         <div style={{ height: 500, width: '100%'}}>
-            <textarea style={{ height: 400, width: '100%', border: "2px solid gray"}} value={actionsToDispatch} onChange={handleTextAreaChange}/>
+            <textarea style={{ height: 400, width: '100%', border: "1px solid gray"}} value={actionsToDispatch} onChange={handleTextAreaChange}/>
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDispatch} disabled={canDispatch}>Dispatch</Button>
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
         </div>
