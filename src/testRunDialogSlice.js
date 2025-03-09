@@ -1,4 +1,4 @@
-import { createSlice }  from '@reduxjs/toolkit'
+import {createSlice}  from '@reduxjs/toolkit'
 
 const initialState = {
     isOpen: false
@@ -8,8 +8,7 @@ const testRunDialogSlice = createSlice({
     name: 'testRunDialog',
     initialState: initialState,
     reducers: {
-        open: (state, action) =>
-        {
+        open: (state) => {
             state.isOpen = true;
         },
         close: (state) => {

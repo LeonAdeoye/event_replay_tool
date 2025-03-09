@@ -1,7 +1,7 @@
-import { createSlice }  from '@reduxjs/toolkit'
+import {createSlice}  from '@reduxjs/toolkit'
 
 const initialState = {
-    actions: [],
+    actions: []
 }
 
 const dispatchedActionsSlice = createSlice({
@@ -22,4 +22,4 @@ const dispatchedActionsSlice = createSlice({
 });
 
 export default dispatchedActionsSlice.reducer;
-export const { add, clear, save} = dispatchedActionsSlice.actions;
+export const {add, clear, save} = dispatchedActionsSlice.actions;

@@ -19,8 +19,8 @@ const Comparer = () => {
         { field: "runDate", width: 450 }
     ]);
 
-    const [canCompare, setCanCompare] = React.useState(false);
-    const [canClear, setCanClear] = React.useState(false);
+    const [canCompare]  = React.useState(false);
+    const [canClear] = React.useState(false);
 
     const handleCompare = () => {
     }
