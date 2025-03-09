@@ -1,14 +1,21 @@
-import React from "react";
+import React, {useState} from "react";
 import {Button} from "@mui/material";
+import {add} from "./dispatchedActionsSlice";
+import {useDispatch} from "react-redux";
 
 
 const Dispatcher = () => {
-    const [actionsToDispatch, setActionsToDispatch] = React.useState("");
-    const [canDispatch, setCanDispatch] = React.useState(false);
-    const [canClear, setCanClear] = React.useState(false);
+    const [actionsToDispatch, setActionsToDispatch] = useState("");
+    const [canDispatch, setCanDispatch] = useState(false);
+    const [canClear, setCanClear] = useState(false);
+    const dispatch = useDispatch();
 
     const handleDispatch = () => {
-        setActionsToDispatch("");
+        const actionsArray = actionsToDispatch.split(',').map(action => action.trim());
+        if(Array.isArray(actionsArray) && actionsArray.length > 0) {
+            dispatch(add(actionsArray));
+            setActionsToDispatch("");
+        }
     }
 
     const handleClear = () => {
