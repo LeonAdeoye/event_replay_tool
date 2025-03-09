@@ -11,7 +11,7 @@ const Dispatcher = () => {
     const dispatch = useDispatch();
 
     const handleDispatch = () => {
-        const actionsArray = actionsToDispatch.split(',').map(action => action.trim());
+        const actionsArray = JSON.parse(actionsToDispatch);
         if(Array.isArray(actionsArray) && actionsArray.length > 0) {
             dispatch(add(actionsArray));
             setActionsToDispatch("");

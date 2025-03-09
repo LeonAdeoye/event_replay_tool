@@ -1,7 +1,7 @@
 import { createSlice }  from '@reduxjs/toolkit'
 
 const initialState = {
-    dispatchedActions: [],
+    actions: [],
 }
 
 const dispatchedActionsSlice = createSlice({
@@ -10,13 +10,16 @@ const dispatchedActionsSlice = createSlice({
     reducers: {
         add: (state, action) =>
         {
-            state.dispatchedActions = action.payload;
+            state.actions = action.payload;
         },
         clear: (state) => {
-            state.dispatchedActions = [];
+            state.actions = [];
+        },
+        save: (state, action) => {
+            console.log(action.payload);
         }
     }
 });
 
 export default dispatchedActionsSlice.reducer;
-export const { add, clear } = dispatchedActionsSlice.actions;
+export const { add, clear, save} = dispatchedActionsSlice.actions;
