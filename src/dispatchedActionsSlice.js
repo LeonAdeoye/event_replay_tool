@@ -8,8 +8,7 @@ const dispatchedActionsSlice = createSlice({
     name: 'dispatchedActions',
     initialState: initialState,
     reducers: {
-        add: (state, action) =>
-        {
+        add: (state, action) => {
             state.actions = action.payload;
         },
         clear: (state) => {
