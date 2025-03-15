@@ -3,6 +3,7 @@ import {Button} from "@mui/material";
 import {add} from "./dispatchedActionsSlice";
 import {useDispatch} from "react-redux";
 
+//[{"action": "open", "payload": {"price":10, "symbol":"0001.HK"}},{"action": "close", "payload": {"price":20, "symbol":"0005.HK"}}]
 
 const Dispatcher = () => {
     const [actionsToDispatch, setActionsToDispatch] = useState("");

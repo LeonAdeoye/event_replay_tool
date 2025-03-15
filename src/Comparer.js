@@ -15,7 +15,7 @@ const Comparer = () => {
     const testRuns = useSelector((state) => state.testRuns.testRuns);
 
     const [colDefs] = useState([
-        { field: "id" , width: 290, headerName: "Test Run ID" },
+        { field: "id" , width: 290, headerName: "Test run id" },
         { field: "actions" , width: 180, headerName: "Number of actions" },
         { field: "description" , width: 300},
         { field: "runTime", width: 220, valueFormatter: params => {

@@ -14,11 +14,8 @@ const dispatchedActionsSlice = createSlice({
         clear: (state) => {
             state.actions = [];
         },
-        save: (state, action) => {
-            console.log(action.payload);
-        }
     }
 });
 
 export default dispatchedActionsSlice.reducer;
-export const {add, clear, save} = dispatchedActionsSlice.actions;
+export const {add, clear} = dispatchedActionsSlice.actions;

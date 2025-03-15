@@ -3,14 +3,15 @@ import {Button} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import {useDispatch, useSelector} from "react-redux";
-import {clear,save} from "./dispatchedActionsSlice";
+import {clear} from "./dispatchedActionsSlice";
+import TestRunDialog from "./TestRunDialog";
+import {openTestRunDialog} from "./testRunDialogSlice";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const TestRun = () => {
     const dispatchedActions = useSelector((state) => state.dispatchedActions.actions);
     const dispatch = useDispatch();
-    //[{"action":10, "payload": {"price":10, "symbol":"0001.HK"}},{"action":11, "payload": {"price":20, "symbol":"0005.HK"}}]
 
     const [colDefs] = useState([
         { field: "action" },
@@ -23,8 +24,7 @@ const TestRun = () => {
     const [canClear] = React.useState(false);
 
     const handleSave = () => {
-        dispatch(save(dispatchedActions));
-        dispatch(clear());
+        dispatch(openTestRunDialog());
     }
 
     const handleClear = () => {
@@ -39,6 +39,7 @@ const TestRun = () => {
             />
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleSave} disabled={canSave}>Save</Button>
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
+            <TestRunDialog/>
         </div>
     )
 }
