@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Button} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {fetchTestRuns} from "./testRunsSlice";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -11,18 +11,24 @@ const Comparer = () => {
     const gridAPi = useRef(null);
     const onGridReady = (params) => gridAPi.current = params;
     const dispatch = useDispatch();
-    const [rowsToCompare, setRowsToCompare] = useState([]);
-    const [rowData] = useState([
-        { runId: "1", actions: 10, description: "Test run 1", runDate: Date() },
-        { runId: "2", actions: 40, description: "Test run 2", runDate: Date() },
-        { runId: "2", actions: 5, description: "Test run 3",  runDate: Date() },
-    ]);
+    const [, setRowsToCompare] = useState([]);
+    const testRuns = useSelector((state) => state.testRuns.testRuns);
 
     const [colDefs] = useState([
-        { field: "runId" },
-        { field: "actions" },
+        { field: "id" , width: 290, headerName: "Test Run ID" },
+        { field: "actions" , width: 180, headerName: "Number of actions" },
         { field: "description" , width: 300},
-        { field: "runDate", width: 450 }
+        { field: "runTime", width: 220, valueFormatter: params => {
+            if (!params.value) return "";
+            return new Date(params.value).toLocaleString("en-GB", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"});
+            }
+        }
     ]);
 
     const [canCompare]  = React.useState(false);
@@ -35,9 +41,9 @@ const Comparer = () => {
     }
 
     useEffect(() => {
-        dispatch(fetchTestRuns);
+        dispatch(fetchTestRuns());
 
-    }, [dispatch])
+    }, [dispatch]);
 
     const handleRowClicked = (event) => {
         const selectedRows = gridAPi.current?.api.getSelectedRows() || [];
@@ -47,7 +53,7 @@ const Comparer = () => {
                 setRowsToCompare([]);
                 break;
             case 1:
-                if(selectedRows[0] != undefined)
+                if(selectedRows[0] !== undefined)
                     setRowsToCompare(selectedRows);
                 break;
             case 2:
@@ -57,11 +63,32 @@ const Comparer = () => {
         }
     }
 
+    const getTestRuns = useCallback( (runs) => {
+        const summary = runs.reduce((acc, run) => {
+            const existing = acc.find(item => item.id === run.id);
+            if (existing) {
+                existing.actions += 1;
+            } else {
+                acc.push({
+                    id: run.id,
+                    actions: 1,
+                    description: "Test Run Description",
+                    runTime: run.runTime
+                });
+            }
+            return acc;
+        }, []);
+
+        return summary;
+    }, []);
+
     return (
-        <div style={{ height: 500, width: '100%'}}>
+        <div style={{ height: 500, width: 1000}}>
             <AgGridReact
-                rowData={rowData}
+                rowData={getTestRuns(testRuns)}
                 columnDefs={colDefs}
+                rowSelection="multiple"
+                suppressCellSelection={true}
             />
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={canCompare}>Compare</Button>
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
