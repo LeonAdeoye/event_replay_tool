@@ -13,15 +13,17 @@ const TestRunDialog = () => {
 
     const createTestRun = useCallback( () => {
         const testRunId = crypto.randomUUID();
-        return dispatchedActions.map((action, index) => {
+        return dispatchedActions.map((actionEvent, index) => {
             return {
                 id: testRunId,
                 testRunnerName: testRunnerName,
                 testRunDescription: testRunDescription,
-                type: action,
+                type: actionEvent.action,
+                payload: actionEvent.payload,
                 prevState: {},
                 nextState: {},
-                index: index
+                index: index,
+                runTime: actionEvent.runTime || new Date().toISOString()
             }
         });
     }, [testRunnerName, testRunDescription, dispatchedActions]);

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Button} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
@@ -15,10 +15,11 @@ const Comparer = () => {
     const testRuns = useSelector((state) => state.testRuns.testRuns);
 
     const [colDefs] = useState([
-        { field: "id" , width: 290, headerName: "Test run id" },
+        { field: "id" , width: 300, headerName: "Test run id" },
         { field: "actions" , width: 180, headerName: "Number of actions" },
-        { field: "description" , width: 300},
-        { field: "runTime", width: 220, valueFormatter: params => {
+        { field: "description" , width: 300, headerName: "Test description"},
+        { field: "runner", width: 150, headerName: "Test runner"},
+        { field: "runTime", headerName: "Run time", width: 220, valueFormatter: params => {
             if (!params.value) return "";
             return new Date(params.value).toLocaleString("en-GB", {
                 year: "numeric",
@@ -72,7 +73,8 @@ const Comparer = () => {
                 acc.push({
                     id: run.id,
                     actions: 1,
-                    description: "Test Run Description",
+                    description: run.testRunDescription,
+                    runner: run.testRunnerName,
                     runTime: run.runTime
                 });
             }
@@ -82,13 +84,18 @@ const Comparer = () => {
         return summary;
     }, []);
 
+    const rowSelection = useMemo(() => {
+        return {
+            mode: 'multiRow'
+        };
+    }, []);
+
     return (
-        <div style={{ height: 500, width: 1000}}>
+        <div style={{ height: 500, width: 1210}}>
             <AgGridReact
                 rowData={getTestRuns(testRuns)}
                 columnDefs={colDefs}
-                rowSelection="multiple"
-                suppressCellSelection={true}
+                rowSelection={rowSelection}
             />
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={canCompare}>Compare</Button>
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
