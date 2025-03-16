@@ -4,6 +4,7 @@ import {AgGridReact} from "ag-grid-react";
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import {useDispatch, useSelector} from "react-redux";
 import {fetchTestRuns} from "./testRunsSlice";
+import Difference from "./Difference";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -11,7 +12,7 @@ const Comparer = () => {
     const gridAPi = useRef(null);
     const onGridReady = (params) => gridAPi.current = params;
     const dispatch = useDispatch();
-    const [, setRowsToCompare] = useState([]);
+    const [, setComparands] = useState([]);
     const testRuns = useSelector((state) => state.testRuns.testRuns);
 
     const [colDefs] = useState([
@@ -46,23 +47,24 @@ const Comparer = () => {
 
     }, [dispatch]);
 
-    const handleRowClicked = (event) => {
+    const handleRowClicked = useCallback(() => {
         const selectedRows = gridAPi.current?.api.getSelectedRows() || [];
         switch(selectedRows.length)
         {
             case 0:
-                setRowsToCompare([]);
+                setComparands([]);
                 break;
             case 1:
                 if(selectedRows[0] !== undefined)
-                    setRowsToCompare(selectedRows);
+                    setComparands(selectedRows);
                 break;
             case 2:
-                setRowsToCompare(selectedRows);
+                if(selectedRows[0] !== undefined && selectedRows[1] !== undefined)
+                    setComparands(selectedRows);
                 break;
             default:
         }
-    }
+    },[]);
 
     const getTestRuns = useCallback( (runs) => {
         const summary = runs.reduce((acc, run) => {
@@ -86,20 +88,30 @@ const Comparer = () => {
 
     const rowSelection = useMemo(() => {
         return {
-            mode: 'multiRow'
+            mode: 'multiRow',
+            // checkboxes: true,
+            // headerCheckbox: true,
+            // enableClickSelection: true,
         };
     }, []);
 
     return (
-        <div style={{ height: 500, width: 1210}}>
-            <AgGridReact
-                rowData={getTestRuns(testRuns)}
-                columnDefs={colDefs}
-                rowSelection={rowSelection}
-            />
-            <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={canCompare}>Compare</Button>
-            <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
-        </div>
+        <>
+            <div style={{ height: 500, width: 1210}}>
+                <AgGridReact
+                    rowData={getTestRuns(testRuns)}
+                    columnDefs={colDefs}
+                    onGridReady={onGridReady}
+                    rowSelection={rowSelection}
+                    onSelectionChanged={handleRowClicked}
+                />
+                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={canCompare}>Compare</Button>
+                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
+            </div>
+            <div>
+                <Difference/>
+            </div>
+        </>
     )
 }
 
