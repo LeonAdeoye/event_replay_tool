@@ -1,21 +1,40 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Button} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import {AllCommunityModule, ModuleRegistry, RowSelectionModule} from 'ag-grid-community';
 import {useDispatch, useSelector} from "react-redux";
 import {fetchTestRuns} from "./testRunsSlice";
 import Difference from "./Difference";
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([AllCommunityModule, RowSelectionModule]);
 
 const Comparer = () => {
     const gridAPi = useRef(null);
     const onGridReady = (params) => gridAPi.current = params;
     const dispatch = useDispatch();
-    const [, setComparands] = useState([]);
+    const [,setComparands] = useState([]);
     const testRuns = useSelector((state) => state.testRuns.testRuns);
 
-    const [colDefs] = useState([
+    const testRunsMemo = useMemo(() => {
+        const summary = testRuns.reduce((acc, run) => {
+            const existing = acc.find(item => item.id === run.id);
+            if (existing) {
+                existing.actions += 1;
+            } else {
+                acc.push({
+                    id: run.id,
+                    actions: 1,
+                    description: run.testRunDescription,
+                    runner: run.testRunnerName,
+                    runTime: run.runTime
+                });
+            }
+            return acc;
+        }, []);
+        return summary;
+    }, [testRuns]);
+
+    const colDefsMemo = useMemo(() => { return [
         { field: "id" , width: 300, headerName: "Test run id" },
         { field: "actions" , width: 180, headerName: "Number of actions" },
         { field: "description" , width: 300, headerName: "Test description"},
@@ -31,16 +50,21 @@ const Comparer = () => {
                 second: "2-digit"});
             }
         }
-    ]);
+    ]}, []);
 
     const [canCompare]  = React.useState(false);
     const [canClear] = React.useState(false);
 
-    const handleCompare = () => {
-    }
+    const handleCompare = useCallback(() => {
+        if (gridAPi.current) {
+        }
+    }, []);
 
-    const handleClear = () => {
-    }
+    const handleClear = useCallback(() => {
+        if (gridAPi.current) {
+            gridAPi.current.api.deselectAll();
+        }
+    }, []);
 
     useEffect(() => {
         dispatch(fetchTestRuns());
@@ -66,32 +90,11 @@ const Comparer = () => {
         }
     },[]);
 
-    const getTestRuns = useCallback( (runs) => {
-        const summary = runs.reduce((acc, run) => {
-            const existing = acc.find(item => item.id === run.id);
-            if (existing) {
-                existing.actions += 1;
-            } else {
-                acc.push({
-                    id: run.id,
-                    actions: 1,
-                    description: run.testRunDescription,
-                    runner: run.testRunnerName,
-                    runTime: run.runTime
-                });
-            }
-            return acc;
-        }, []);
-
-        return summary;
-    }, []);
-
     const rowSelection = useMemo(() => {
         return {
             mode: 'multiRow',
-            // checkboxes: true,
-            // headerCheckbox: true,
-            // enableClickSelection: true,
+            headerCheckbox: false,
+            enableClickSelection: true,
         };
     }, []);
 
@@ -99,8 +102,8 @@ const Comparer = () => {
         <>
             <div style={{ height: 500, width: 1210}}>
                 <AgGridReact
-                    rowData={getTestRuns(testRuns)}
-                    columnDefs={colDefs}
+                    rowData={testRunsMemo || []}
+                    columnDefs={colDefsMemo}
                     onGridReady={onGridReady}
                     rowSelection={rowSelection}
                     onSelectionChanged={handleRowClicked}
