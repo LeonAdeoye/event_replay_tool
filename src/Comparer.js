@@ -52,8 +52,8 @@ const Comparer = () => {
         }
     ]}, []);
 
-    const [canCompare]  = React.useState(false);
-    const [canClear] = React.useState(false);
+    const [disableCompare, setDisableCompare]  = React.useState(true);
+    const [disableClear, setDisableClear] = React.useState(true);
 
     const handleCompare = useCallback(() => {
         if (gridAPi.current) {
@@ -77,14 +77,22 @@ const Comparer = () => {
         {
             case 0:
                 setComparands([]);
+                setDisableCompare(true);
+                setDisableClear(true)
                 break;
             case 1:
-                if(selectedRows[0] !== undefined)
+                if(selectedRows[0] !== undefined) {
                     setComparands(selectedRows);
+                    setDisableCompare(true);
+                    setDisableClear(false)
+                }
                 break;
             case 2:
-                if(selectedRows[0] !== undefined && selectedRows[1] !== undefined)
+                if(selectedRows[0] !== undefined && selectedRows[1] !== undefined) {
                     setComparands(selectedRows);
+                    setDisableCompare(false);
+                    setDisableClear(false)
+                }
                 break;
             default:
         }
@@ -108,8 +116,8 @@ const Comparer = () => {
                     rowSelection={rowSelection}
                     onSelectionChanged={handleRowClicked}
                 />
-                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={canCompare}>Compare</Button>
-                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
+                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
+                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
             </div>
             <div>
                 <Difference/>
