@@ -116,7 +116,7 @@ const Comparer = () => {
                     rowSelection={rowSelection}
                     onSelectionChanged={handleRowClicked}
                 />
-                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
+                <Button className="text-red" variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
                 <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
             </div>
             <div>
