@@ -1,7 +1,8 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Button} from "@mui/material";
 import {add} from "./dispatchedActionsSlice";
 import {useDispatch} from "react-redux";
+import {PubSubManager} from "./PubSubManager.js";
 
 //[{"action": "open", "payload": {"price":10, "symbol":"0001.HK"}},{"action": "close", "payload": {"price":20, "symbol":"0005.HK"}}]
 
@@ -12,11 +13,23 @@ const Dispatcher = () => {
     const [disableClear, setDisableClear] = useState(true);
     const dispatch = useDispatch();
 
+    const pubSubManager = useMemo(() => {
+        return new PubSubManager("action-event-dispatcher", "ws://localhost:9008/amps/json", "action-event-response", "action-event-request");
+    }, []);
+
+    useEffect(() => {
+        pubSubManager.connect();
+        return () => {
+            pubSubManager.disconnect();
+        }
+    }, []);
+
     const handleDispatch = () => {
         if(isJSONInvalid(actionsToDispatch)) return;
         const actionsArray = JSON.parse(actionsToDispatch);
         if(Array.isArray(actionsArray) && actionsArray.length > 0) {
             dispatch(add(actionsArray));
+            pubSubManager.publish(actionsArray);
             setActionsToDispatch(defaultMessage);
         }
     }
