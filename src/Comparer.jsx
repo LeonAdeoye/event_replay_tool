@@ -5,6 +5,7 @@ import {AllCommunityModule, ModuleRegistry, RowSelectionModule} from 'ag-grid-co
 import {useDispatch, useSelector} from "react-redux";
 import {fetchTestRuns} from "./testRunsSlice";
 import Difference from "./Difference";
+import {deleteTestRun} from "./testRunDialogSlice.js";
 
 ModuleRegistry.registerModules([AllCommunityModule, RowSelectionModule]);
 
@@ -13,6 +14,7 @@ const Comparer = () => {
     const onGridReady = (params) => gridAPi.current = params;
     const dispatch = useDispatch();
     const [,setComparands] = useState([]);
+    const [refresh, setRefresh] = useState(false);
     const testRuns = useSelector((state) => state.testRuns.testRuns);
 
     const testRunsMemo = useMemo(() => {
@@ -54,6 +56,7 @@ const Comparer = () => {
 
     const [disableCompare, setDisableCompare]  = React.useState(true);
     const [disableClear, setDisableClear] = React.useState(true);
+    const [disableDelete, setDisableDelete] = React.useState(true);
 
     const handleCompare = useCallback(() => {
         if (gridAPi.current) {
@@ -66,10 +69,17 @@ const Comparer = () => {
         }
     }, []);
 
+    const handleDelete = useCallback(() => {
+        if (gridAPi.current) {
+            const selectedRows = gridAPi.current.api.getSelectedRows();
+            selectedRows.forEach(row => dispatch(deleteTestRun(row.id)));
+            setRefresh(!refresh);
+        }
+    }, []);
+
     useEffect(() => {
         dispatch(fetchTestRuns());
-
-    }, [dispatch]);
+    }, [refresh]);
 
     const handleRowClicked = useCallback(() => {
         const selectedRows = gridAPi.current?.api.getSelectedRows() || [];
@@ -78,20 +88,20 @@ const Comparer = () => {
             case 0:
                 setComparands([]);
                 setDisableCompare(true);
-                setDisableClear(true)
+                setDisableDelete(true);
                 break;
             case 1:
                 if(selectedRows[0] !== undefined) {
                     setComparands(selectedRows);
                     setDisableCompare(true);
-                    setDisableClear(false)
+                    setDisableDelete(false);
                 }
                 break;
             case 2:
                 if(selectedRows[0] !== undefined && selectedRows[1] !== undefined) {
                     setComparands(selectedRows);
                     setDisableCompare(false);
-                    setDisableClear(false)
+                    setDisableDelete(true);
                 }
                 break;
             default:
@@ -118,6 +128,7 @@ const Comparer = () => {
                 />
                 <Button className="text-red" variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
                 <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
+                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDelete} disabled={disableDelete}>Delete</Button>
             </div>
             <div>
                 <Difference/>
