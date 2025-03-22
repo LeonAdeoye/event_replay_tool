@@ -72,14 +72,14 @@ const Dispatcher = () => {
     }
 
     return (
-        <div style={{ height: 500, width: '100%'}}>
+        <div style={{ height: 500, width: '95%'}}>
             <h4>Example: {configs.amps.exampleMessage}</h4>
             <br/>
             <textarea style={{ height: 400, width: '100%', border: "1px solid gray"}} value={actionsToDispatch}
                       onClick={handleTextAreaClick}
                       onBlur={handleBlur}
                       onChange={handleTextAreaChange}/>
-            <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDispatch} disabled={disableDispatch}>Dispatch</Button>
+            <Button style={{marginRight: '2px'}} variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDispatch} disabled={disableDispatch}>Dispatch</Button>
             <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
         </div>
     )

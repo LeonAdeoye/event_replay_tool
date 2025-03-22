@@ -18,7 +18,7 @@ export const saveTestRun = createAsyncThunk('testRuns/save', async (actionEvents
     actionEvents.forEach(actionEvent => {
         saveActionEvent(actionEvent).then(response => {
             if(response.ok) {
-                console.log('Saved action event response: ', response.json());
+                console.log('Saved action event response: ', response.status);
                 return response.json();
             }
             throw new Error(`Failed to save action event. Response status: ${response.status}, Response msg: ${response.statusText}`);

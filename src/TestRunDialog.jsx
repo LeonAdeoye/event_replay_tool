@@ -18,10 +18,10 @@ const TestRunDialog = () => {
                 id: testRunId,
                 testRunnerName: testRunnerName,
                 testRunDescription: testRunDescription,
-                type: actionEvent.action,
-                payload: actionEvent.payload,
-                prevState: {},
-                nextState: {},
+                type: actionEvent.action.type,
+                payload: actionEvent.action.payload,
+                prevState: actionEvent.previousState,
+                nextState: actionEvent.nextState,
                 index: index,
                 runTime: actionEvent.runTime || new Date().toISOString()
             }
@@ -47,14 +47,14 @@ const TestRunDialog = () => {
 
     return (
         <div>
-            <Dialog open={isOpen} sx={{height:500}}>
+            <Dialog open={isOpen}>
                 <DialogTitle>Save Test Run</DialogTitle>
-                <DialogContent>
-                    <div>
-                        <TextField size="small" required label="Test Description" variant="outlined" onChange={handleTestRunDescriptionChange}/>
+                <DialogContent style={{ height: '200px', width: '400px'}} >
+                    <div className="my-2">
+                        <TextField style={{ width: '350px'}} size="small" required label="Test Description" variant="outlined" onChange={handleTestRunDescriptionChange}/>
                     </div>
-                    <div>
-                        <TextField size="small" required label="Test Runner" variant="outlined" onChange={handleTestRunnerNameChange} />
+                    <div className="">
+                        <TextField style={{ width: '350px'}} size="small" required label="Test Runner" variant="outlined" onChange={handleTestRunnerNameChange} />
                     </div>
                 </DialogContent>
                 <DialogActions>
