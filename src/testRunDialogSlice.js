@@ -31,7 +31,7 @@ export const saveTestRun = createAsyncThunk('testRuns/save', async (actionEvents
 
 const testRunDialogSlice = createSlice({
     name: 'testRunDialog',
-    initialState: initialState,
+    initialState,
     reducers: {
         openTestRunDialog: (state) => {
             state.isOpen = true;

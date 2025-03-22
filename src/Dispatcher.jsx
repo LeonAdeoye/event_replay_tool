@@ -3,8 +3,7 @@ import {Button} from "@mui/material";
 import {add} from "./dispatchedActionsSlice";
 import {useDispatch} from "react-redux";
 import {PubSubManager} from "./PubSubManager.js";
-
-//[{"action": "open", "payload": {"price":10, "symbol":"0001.HK"}},{"action": "close", "payload": {"price":20, "symbol":"0005.HK"}}]
+import {configs} from "./Configs.js";
 
 const Dispatcher = () => {
     const defaultMessage = "Enter the array of actions to dispatch here...";
@@ -14,22 +13,19 @@ const Dispatcher = () => {
     const dispatch = useDispatch();
 
     const pubSubManager = useMemo(() => {
-        return new PubSubManager("action-event-dispatcher", "ws://localhost:9008/amps/json", "action-event-response", "action-event-request");
+        return new PubSubManager(configs.amps.instanceName, configs.amps.connectionString, configs.amps.topics.inbound, configs.amps.topics.outbound);
     }, []);
 
     useEffect(() => {
-        pubSubManager.connect();
-        return () => {
-            pubSubManager.disconnect();
-        }
+        pubSubManager.connect().then(() => pubSubManager.setActionCallback(action => dispatch(add(action))));
+        return () => pubSubManager.disconnect();
     }, []);
 
-    const handleDispatch = () => {
-        if(isJSONInvalid(actionsToDispatch)) return;
+    const handleDispatch = async () => {
+        if (isJSONInvalid(actionsToDispatch)) return;
         const actionsArray = JSON.parse(actionsToDispatch);
-        if(Array.isArray(actionsArray) && actionsArray.length > 0) {
-            dispatch(add(actionsArray));
-            pubSubManager.publish(actionsArray);
+        if (Array.isArray(actionsArray) && actionsArray.length > 0) {
+            await pubSubManager.publish(actionsArray);
             setActionsToDispatch(defaultMessage);
         }
     }
@@ -77,6 +73,8 @@ const Dispatcher = () => {
 
     return (
         <div style={{ height: 500, width: '100%'}}>
+            <h4>Example: {configs.amps.exampleMessage}</h4>
+            <br/>
             <textarea style={{ height: 400, width: '100%', border: "1px solid gray"}} value={actionsToDispatch}
                       onClick={handleTextAreaClick}
                       onBlur={handleBlur}

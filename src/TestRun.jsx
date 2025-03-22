@@ -14,22 +14,20 @@ const TestRun = () => {
     const dispatch = useDispatch();
 
     const [colDefs] = useState([
-        { field: "action" },
-        { field: "payload" , valueFormatter: (params) => JSON.stringify(params.value)},
-        { field: "prevState" },
-        { field: "nextState" }
+        { field: "action", valueFormatter: (params) => {
+            console.log(params)
+            return params.data.action.type
+            }, width: 300},
+        { field: "payload",  valueFormatter: (params) => JSON.stringify(params.data?.action?.payload), width: 350},
+        { field: "previousState", valueFormatter: (params) => JSON.stringify(params.data?.previousState), width: 400},
+        { field: "nextState", valueFormatter: (params) => JSON.stringify(params.data?.nextState) , width: 400},
     ]);
 
     const [canSave] = React.useState(false);
     const [canClear] = React.useState(false);
 
-    const handleSave = () => {
-        dispatch(openTestRunDialog());
-    }
-
-    const handleClear = () => {
-        dispatch(clear());
-    }
+    const handleSave = () => dispatch(openTestRunDialog());
+    const handleClear = () => dispatch(clear());
 
     return (
         <div style={{ height: 500, width: '100%'}}>

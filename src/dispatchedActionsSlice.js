@@ -6,10 +6,10 @@ const initialState = {
 
 const dispatchedActionsSlice = createSlice({
     name: 'dispatchedActions',
-    initialState: initialState,
+    initialState,
     reducers: {
         add: (state, action) => {
-            state.actions = action.payload;
+            state.actions = [...state.actions, action.payload];
         },
         clear: (state) => {
             state.actions = [];
