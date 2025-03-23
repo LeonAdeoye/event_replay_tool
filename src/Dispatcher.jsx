@@ -79,8 +79,8 @@ const Dispatcher = () => {
                       onClick={handleTextAreaClick}
                       onBlur={handleBlur}
                       onChange={handleTextAreaChange}/>
-            <Button style={{marginRight: '2px'}} variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDispatch} disabled={disableDispatch}>Dispatch</Button>
-            <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
+            <Button variant="contained" sx={{textTransform: 'capitalize', marginTop: 1, marginRight: 1}} onClick={handleDispatch} disabled={disableDispatch}>Dispatch</Button>
+            <Button variant="contained" sx={{textTransform: 'capitalize', marginTop: 1, marginRight: 1}} onClick={handleClear} disabled={disableClear}>Clear</Button>
         </div>
     )
 }

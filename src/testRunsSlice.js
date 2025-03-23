@@ -58,6 +58,7 @@ const testRunsSlice = createSlice({
             })
             .addCase(compareTestRuns.fulfilled, (state, action) => {
                 state.differences = action.payload;
+                console.log("differences: ", state.differences);
                 state.loading = false;
                 state.error = '';
             })

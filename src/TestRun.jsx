@@ -23,8 +23,9 @@ const TestRun = () => {
         { field: "nextState", valueFormatter: (params) => JSON.stringify(params.data?.nextState) , width: 400},
     ]);
 
-    const [canSave] = React.useState(false);
-    const [canClear] = React.useState(false);
+    const disableSave = () => dispatchedActions.length === 0;
+    const disableClear = () => dispatchedActions.length === 0;
+
 
     const handleSave = () => dispatch(openTestRunDialog());
     const handleClear = () => dispatch(clear());
@@ -35,8 +36,8 @@ const TestRun = () => {
                 rowData={dispatchedActions}
                 columnDefs={colDefs}
             />
-            <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleSave} disabled={canSave}>Save</Button>
-            <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={canClear}>Clear</Button>
+            <Button variant="contained" sx={{textTransform: 'capitalize', marginTop: 1, marginRight: 1}} onClick={handleSave} disabled={disableSave()}>Save</Button>
+            <Button variant="contained" sx={{textTransform: 'capitalize', marginTop: 1, marginRight: 1}} onClick={handleClear} disabled={disableClear()}>Clear</Button>
             <TestRunDialog/>
         </div>
     )

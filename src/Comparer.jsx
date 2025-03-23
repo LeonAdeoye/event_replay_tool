@@ -65,6 +65,7 @@ const Comparer = () => {
             if (selectedRows.length === 2) {
                 setComparands([selectedRows[0]?.id, selectedRows[1]?.id]);
                 setDisplayComparisonResult(true);
+                setDisableClear(false);
                 dispatch(compareTestRuns({firstTestRunId: selectedRows[0].id, secondTestRunId: selectedRows[1].id}));
             }
         }
@@ -73,6 +74,8 @@ const Comparer = () => {
     const handleClear = useCallback(() => {
         if (gridAPi.current) {
             gridAPi.current.api.deselectAll();
+            setDisplayComparisonResult(false);
+            setDisableClear(true);
         }
     }, []);
 
@@ -112,6 +115,9 @@ const Comparer = () => {
                 }
                 break;
             default:
+                setDisableCompare(true);
+                setDisableDelete(false);
+                setComparands([]);
         }
     },[]);
 
@@ -124,8 +130,8 @@ const Comparer = () => {
     }, []);
 
     return (
-        <>
-            <div style={{ height: '500px', width: '1210px'}}>
+        <div style={{ display: 'flex' }}>
+            <div id="test-runs" style={{ height: '500px', width: '50%', marginRight:10}}>
                 <AgGridReact
                     rowData={testRunsMemo || []}
                     columnDefs={colDefsMemo}
@@ -134,17 +140,17 @@ const Comparer = () => {
                     onSelectionChanged={handleRowClicked}
                 />
                 <div className="my-2">
-                    <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
-                    <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
-                    <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDelete} disabled={disableDelete}>Delete</Button>
-                </div>
-                <div>
-                    {displayComparisonResult && differences.length > 0 ? <DifferenceDisplay differences={differences}/> : null}
-                    {displayComparisonResult && differences.length === 0 ? <h4 className="bg-green-700 text-4xl text-white">Congratulations! No differences were found between the two test runs.</h4> : null}
+                    <Button variant="contained" sx={{ textTransform: 'capitalize', marginRight: 1 }} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
+                    <Button variant="contained" sx={{ textTransform: 'capitalize', marginRight: 1 }} onClick={handleClear} disabled={disableClear}>Clear</Button>
+                    <Button variant="contained" sx={{ textTransform: 'capitalize' }} onClick={handleDelete} disabled={disableDelete}>Delete</Button>
                 </div>
             </div>
-        </>
-    )
+            <div id="comparison-result" style={{ width: '50%' }}>
+                {displayComparisonResult && differences.length > 0 ? <DifferenceDisplay differences={differences} /> : null}
+                {displayComparisonResult && differences.length === 0 ? <h4 className="bg-green-700 text-4xl text-white">Congratulations! No differences were found between the two test runs.</h4> : null}
+            </div>
+        </div>
+    );
 }
 
 export default Comparer;
