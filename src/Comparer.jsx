@@ -3,9 +3,8 @@ import {Button} from "@mui/material";
 import {AgGridReact} from "ag-grid-react";
 import {AllCommunityModule, ModuleRegistry, RowSelectionModule} from 'ag-grid-community';
 import {useDispatch, useSelector} from "react-redux";
-import {fetchTestRuns} from "./testRunsSlice";
-import Difference from "./Difference";
-import {deleteTestRun} from "./testRunDialogSlice.js";
+import {fetchTestRuns, compareTestRuns, deleteTestRun} from "./testRunsSlice";
+import DifferenceDisplay from "./DifferenceDisplay.jsx";
 
 ModuleRegistry.registerModules([AllCommunityModule, RowSelectionModule]);
 
@@ -16,6 +15,8 @@ const Comparer = () => {
     const [,setComparands] = useState([]);
     const [refresh, setRefresh] = useState(false);
     const testRuns = useSelector((state) => state.testRuns.testRuns);
+    const [displayComparisonResult, setDisplayComparisonResult] = useState(false);
+    const differences = useSelector((state) => state.testRuns.differences);
 
     const testRunsMemo = useMemo(() => {
         const summary = testRuns.reduce((acc, run) => {
@@ -60,6 +61,12 @@ const Comparer = () => {
 
     const handleCompare = useCallback(() => {
         if (gridAPi.current) {
+            const selectedRows = gridAPi.current.api.getSelectedRows();
+            if (selectedRows.length === 2) {
+                setComparands([selectedRows[0]?.id, selectedRows[1]?.id]);
+                setDisplayComparisonResult(true);
+                dispatch(compareTestRuns({firstTestRunId: selectedRows[0].id, secondTestRunId: selectedRows[1].id}));
+            }
         }
     }, []);
 
@@ -86,22 +93,22 @@ const Comparer = () => {
         switch(selectedRows.length)
         {
             case 0:
-                setComparands([]);
                 setDisableCompare(true);
                 setDisableDelete(true);
+                setComparands([]);
                 break;
             case 1:
                 if(selectedRows[0] !== undefined) {
-                    setComparands(selectedRows);
                     setDisableCompare(true);
                     setDisableDelete(false);
+                    setComparands([]);
                 }
                 break;
             case 2:
                 if(selectedRows[0] !== undefined && selectedRows[1] !== undefined) {
                     setComparands(selectedRows);
                     setDisableCompare(false);
-                    setDisableDelete(true);
+                    setDisableDelete(false);
                 }
                 break;
             default:
@@ -118,7 +125,7 @@ const Comparer = () => {
 
     return (
         <>
-            <div style={{ height: 500, width: 1210}}>
+            <div style={{ height: '500px', width: '1210px'}}>
                 <AgGridReact
                     rowData={testRunsMemo || []}
                     columnDefs={colDefsMemo}
@@ -126,12 +133,15 @@ const Comparer = () => {
                     rowSelection={rowSelection}
                     onSelectionChanged={handleRowClicked}
                 />
-                <Button className="text-red" variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
-                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
-                <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDelete} disabled={disableDelete}>Delete</Button>
-            </div>
-            <div>
-                <Difference/>
+                <div className="my-2">
+                    <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleCompare} disabled={disableCompare}>Compare</Button>
+                    <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleClear} disabled={disableClear}>Clear</Button>
+                    <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleDelete} disabled={disableDelete}>Delete</Button>
+                </div>
+                <div>
+                    {displayComparisonResult && differences.length > 0 ? <DifferenceDisplay differences={differences}/> : null}
+                    {displayComparisonResult && differences.length === 0 ? <h4 className="bg-green-700 text-4xl text-white">Congratulations! No differences were found between the two test runs.</h4> : null}
+                </div>
             </div>
         </>
     )

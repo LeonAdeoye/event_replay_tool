@@ -46,7 +46,7 @@ const TestRunDialog = () => {
     }
 
     return (
-        <div>
+        <>
             <Dialog open={isOpen}>
                 <DialogTitle>Save Test Run</DialogTitle>
                 <DialogContent style={{ height: '200px', width: '400px'}} >
@@ -62,7 +62,7 @@ const TestRunDialog = () => {
                     <Button variant="contained" sx={{textTransform: 'capitalize'}} onClick={handleSaveTestRun}>Save Test Run</Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     )
 }
 

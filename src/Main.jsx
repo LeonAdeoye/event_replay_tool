@@ -19,7 +19,7 @@ const Main = () => {
                     <Box>
                         <TabList centered onChange={handleChange} textColor='primary' indicatorColor='primary'>
                             <Tab sx={{backgroundColor:'lightgray', textTransform: 'capitalize', fontWeight: 'bold', border: '1px solid gray', borderTopRightRadius: '8px', borderTopLeftRadius: '8px'}} label='Dispatch actions' value='1'/>
-                            <Tab sx={{backgroundColor:'lightgray', textTransform: 'capitalize', fontWeight: 'bold', border: '1px solid gray', borderTopRightRadius: '8px', borderTopLeftRadius: '8px'}} label='Save test runs' value='2'/>
+                            <Tab sx={{backgroundColor:'lightgray', textTransform: 'capitalize', fontWeight: 'bold', border: '1px solid gray', borderTopRightRadius: '8px', borderTopLeftRadius: '8px'}} label='Save test run' value='2'/>
                             <Tab sx={{backgroundColor:'lightgray', textTransform: 'capitalize', fontWeight: 'bold', border: '1px solid gray', borderTopRightRadius: '8px', borderTopLeftRadius: '8px'}} label='Compare test runs' value='3'/>
                         </TabList>
                     </Box>
